@@ -1,37 +1,93 @@
-// backend/dal/users.js
-import { db } from "../db.js";
+import { Router } from "express";
 import { ObjectId } from "mongodb";
+import { authRequired } from "../auth.js";
+import { db } from "../db.js";
 
-// Return public user (no passwordHash)
-const projection = { projection: { passwordHash: 0 } };
+const r = Router();
+const users = () => db().collection("users");
+const pub = { projection: { passwordHash: 0 } };
 
-/**
- * Find a user by Mongo _id (if valid) OR by username (fallback).
- * Accepts strings like "6792c7e..." or "me"/"alice".
- * If 'idOrUsername' looks like an ObjectId, search by _id,
- * otherwise search by username (case-sensitive; adjust if you need).
- */
-export async function getUser(idOrUsername) {
-  const users = db().collection("users");
-  if (typeof idOrUsername === "string" && ObjectId.isValid(idOrUsername)) {
-    return await users.findOne({ _id: new ObjectId(idOrUsername) }, projection);
+
+r.get("/me", authRequired, async (req, res) => {
+  try {
+    const _id = new ObjectId(req.userId);
+    const me = await users().findOne({ _id }, pub);
+    if (!me) return res.status(404).json({ error: "User not found" });
+    res.json(me);
+  } catch (e) {
+    console.error("[GET /profile/me]", e);
+    res.status(500).json({ error: "Profile load failed" });
   }
-  return await users.findOne({ username: idOrUsername }, projection);
-}
+});
 
-/**
- * Find a user strictly by _id; returns null if id not valid or not found.
- */
-export async function getUserByIdOrNull(id) {
-  if (!ObjectId.isValid(id)) return null;
-  const users = db().collection("users");
-  return await users.findOne({ _id: new ObjectId(id) }, projection);
-}
 
-/**
- * Find a user by username; returns null if not found.
- */
-export async function getUserByUsername(username) {
-  const users = db().collection("users");
-  return await users.findOne({ username }, projection);
-}
+r.get("/search", async (req, res) => {
+  const q = String(req.query.q || "").trim();
+  if (!q) return res.json([]);
+  try {
+    const results = await users().find({
+      $or: [
+        { username: { $regex: q, $options: "i" } },
+        { name:     { $regex: q, $options: "i" } },
+        { email:    { $regex: q, $options: "i" } },
+      ]
+    }, pub).limit(20).toArray();
+    res.json(results);
+  } catch (e) {
+    console.error("[GET /profile/search]", e);
+    res.status(500).json({ error: "Search failed" });
+  }
+});
+
+r.get("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    let user = null;
+    if (ObjectId.isValid(id)) {
+      user = await users().findOne({ _id: new ObjectId(id) }, pub);
+    } else {
+      user = await users().findOne({ username: id }, pub);
+    }
+    if (!user) return res.status(404).json({ error: "User not found" });
+    res.json(user);
+  } catch (e) {
+    console.error("[GET /profile/:id]", e);
+    res.status(500).json({ error: "Profile load failed" });
+  }
+});
+
+
+r.patch("/me", authRequired, async (req, res) => {
+  try {
+    const _id = new ObjectId(req.userId);
+    const patch = {};
+    const { name, username, bio } = req.body || {};
+    if (typeof name === "string") patch.name = name;
+    if (typeof username === "string") patch.username = username;
+    if (typeof bio === "string") patch.bio = bio;
+
+    const { value } = await users().findOneAndUpdate(
+      { _id }, { $set: patch, $currentDate: { updatedAt: true } },
+      { returnDocument: "after", ...pub }
+    );
+    if (!value) return res.status(404).json({ error: "User not found" });
+    res.json(value);
+  } catch (e) {
+    console.error("[PATCH /profile/me]", e);
+    res.status(500).json({ error: "Profile update failed" });
+  }
+});
+
+
+r.delete("/me", authRequired, async (req, res) => {
+  try {
+    const _id = new ObjectId(req.userId);
+    const out = await users().deleteOne({ _id });
+    res.json({ ok: out.acknowledged, deletedCount: out.deletedCount || 0 });
+  } catch (e) {
+    console.error("[DELETE /profile/me]", e);
+    res.status(500).json({ error: "Profile delete failed" });
+  }
+});
+
+export default r;

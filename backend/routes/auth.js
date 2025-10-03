@@ -37,7 +37,6 @@ r.post("/signup", async (req, res) => {
 
 r.post("/login", async (req, res) => {
   try {
-    // Accept both "usernameOrEmail" (API client) and "username"/"email" (plain forms)
     const body = req.body || {};
     const usernameOrEmail =
       body.usernameOrEmail || body.username || body.email || "";

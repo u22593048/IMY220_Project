@@ -10,12 +10,11 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.jsx?$/,                 // parse .js and .jsx
+        test: /\.jsx?$/,                 
         exclude: /node_modules/,
         use: {
           loader: "babel-loader",
           options: {
-            // Force babel-loader to read your .babelrc in THIS folder
             babelrc: true,
             configFile: path.resolve(__dirname, ".babelrc")
           }

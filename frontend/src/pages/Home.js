@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import SearchInput from "../components/SearchInput"; // keep if you have it
+import SearchInput from "../components/SearchInput"; 
 import ProjectList from "../components/ProjectList";
-import CreateProjectForm from "../components/CreateProjectForm"; // you said you have this
+import CreateProjectForm from "../components/CreateProjectForm";
 import { Projects } from "../api";
 
 export default function Home(){

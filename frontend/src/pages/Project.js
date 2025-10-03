@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import ProjectView from "../components/ProjectView";        // keep your existing view component
-import EditProjectForm from "../components/EditProjectForm"; // we’ll reuse it and call API
+import ProjectView from "../components/ProjectView";       
+import EditProjectForm from "../components/EditProjectForm"; 
 import FilesList from "../components/FilesList";
-import MessagesList from "../components/MessagesList";      // keep if you have it
+import MessagesList from "../components/MessagesList";     
 import { Projects } from "../api";
 
 export default function Project(){
@@ -16,7 +16,7 @@ export default function Project(){
   async function refresh(){
     try {
       const [p, c] = await Promise.all([Projects.get(id), Projects.checkins(id)]);
-      setProject(p ? { ...p, tags: p.hashtags || [] } : null); // normalize for components expecting 'tags'
+      setProject(p ? { ...p, tags: p.hashtags || [] } : null); 
       setCheckins(c || []);
     } catch (e) {
       setErr(e.message || "Failed to load project");

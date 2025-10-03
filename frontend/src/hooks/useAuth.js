@@ -14,7 +14,7 @@ export function AuthProvider({ children }) {
         const me = await Auth.me();
         if (alive) setUser(me || null);
       } catch {
-        // not logged in or token invalid
+
       } finally {
         if (alive) setBooted(true);
       }

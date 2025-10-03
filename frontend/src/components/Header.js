@@ -5,8 +5,7 @@ import { Auth } from "../api";
 export default function Header() {
   const { pathname } = useLocation();
 
-  // If you keep a Splash at '/', hide header there
-  // Remove this if you want header always visible
+
   if (pathname === "/") return null;
 
   async function onLogout(e) {

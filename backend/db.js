@@ -8,8 +8,8 @@ export async function initDb(uri) {
   if (!uri) throw new Error("MONGODB_URI not set");
   _client = new MongoClient(uri, { maxPoolSize: 10 });
   await _client.connect();
-  _db = _client.db(); // DB name comes from the URI path
-  // Indexes (idempotent)
+  _db = _client.db(); 
+
   await _db.collection("users").createIndexes([
     { key: { username: 1 }, name: "username_unique", unique: true },
     { key: { email: 1 },    name: "email_unique",    unique: true },

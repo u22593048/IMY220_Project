@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import ProfileCard from "../components/ProfileCard";         // keep your existing card
-import EditProfileForm from "../components/EditProfileForm"; // updated to return {name, username}
+import ProfileCard from "../components/ProfileCard";      
+import EditProfileForm from "../components/EditProfileForm"; 
 import ProjectList from "../components/ProjectList";
 import { Auth, Profile as Api, Projects } from "../api";
 
@@ -36,7 +36,7 @@ export default function Profile(){
     try {
       const sent = {};
       if (patch.name) sent.name = patch.name;
-      if (patch.username) sent.username = patch.username; // handle → username
+      if (patch.username) sent.username = patch.username; 
       if (patch.bio) sent.bio = patch.bio;
       const updated = await Api.updateMe(sent);
       setUser(updated);
