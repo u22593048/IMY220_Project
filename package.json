@@ -3,12 +3,15 @@
   "private": true,
   "scripts": {
     "build:client": "webpack",
-    "build:server": "babel backend/server.js -d backend/dist",
-    "build": "npm run build:client && npm run build:server",
-    "start": "node backend/dist/server.js"
+    "build": "npm run build:client",
+    "start": "node backend/server.js"
   },
   "dependencies": {
+    "bcrypt": "^6.0.0",
+    "cors": "^2.8.5",
     "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.2",
+    "mongodb": "^6.20.0",
     "prop-types": "^15.8.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",

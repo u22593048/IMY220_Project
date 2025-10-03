@@ -3,13 +3,13 @@ import PropTypes from "prop-types";
 
 export default function EditProfileForm({ user, onSave }){
   const [name,setName]=useState(user.name ?? "");
-  const [handle,setHandle]=useState(user.handle ?? "");
+  const [handle,setHandle]=useState(user.handle ?? ""); // handle is username
   const valid=name.trim().length>=2 && handle.trim().length>=2;
 
   function submit(e){
     e.preventDefault();
     if(!valid) return;
-    onSave?.({name,handle});
+    onSave?.({ name, username: handle });
   }
 
   return (
@@ -21,13 +21,15 @@ export default function EditProfileForm({ user, onSave }){
                value={name} onChange={e=>setName(e.target.value)} required minLength={2}/>
       </div>
       <div className="form-row">
-        <label className="label" htmlFor="handle">Handle</label>
+        <label className="label" htmlFor="handle">Username</label>
         <input id="handle" className={`input ${handle.trim().length<2?"is-invalid":""}`}
                value={handle} onChange={e=>setHandle(e.target.value)} required minLength={2}/>
       </div>
       <div className="flex">
         <button className="btn btn-primary" type="submit" disabled={!valid}>Save</button>
-        <button className="btn btn-ghost" type="button" onClick={()=>{setName(user.name);setHandle(user.handle);}}>Reset</button>
+        <button className="btn btn-ghost" type="button" onClick={()=>{
+          setName(user.name ?? ""); setHandle(user.handle ?? "");
+        }}>Reset</button>
       </div>
     </form>
   );

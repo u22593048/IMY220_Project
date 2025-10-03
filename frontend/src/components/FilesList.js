@@ -5,12 +5,12 @@ export default function FilesList({ files=[] }){
     <section className="card card-pad grid">
       <div className="flex between center">
         <h3 className="m0">Files</h3>
-        <button className="btn">Upload…</button>
+        <button className="btn" disabled>Upload…</button>
       </div>
       <ul className="list">
         {files.map(f => (
           <li key={f} className="file-item">
-            <span className="file-name">{f}</span>
+            <a className="file-name" href={`/uploads/${encodeURIComponent(f)}`} download>{f}</a>
           </li>
         ))}
       </ul>

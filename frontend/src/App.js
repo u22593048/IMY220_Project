@@ -6,6 +6,8 @@ import Signup from "./pages/Signup";
 import Home from "./pages/Home";
 import Profile from "./pages/Profile";
 import Project from "./pages/Project";
+import Friends from "./pages/Friends";
+import Search from "./pages/Search";
 
 export default function App(){
   return (
@@ -19,6 +21,9 @@ export default function App(){
         <Route path="/profile/:id" element={<Profile/>}/>
         <Route path="/project/:id" element={<Project/>}/>
         <Route path="*" element={<main className="container page"><h2>404 Not Found</h2></main>} />
+        <Route path="/friends" element={<Friends/>}/>
+        <Route path="/search" element={<Search/>}/>
+        
       </Routes>
     </BrowserRouter>
   );

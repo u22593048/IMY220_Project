@@ -1,7 +1,12 @@
-import React from 'react';
+import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 
 export default function Splash() {
+  useEffect(() => {
+    const t = localStorage.getItem("token");
+    if (t) window.location.assign("/home");
+  }, []);
+
   return (
     <main className="container page splash-hero">
       <section className="card card-pad grid">
@@ -22,5 +27,3 @@ export default function Splash() {
     </main>
   );
 }
-
-

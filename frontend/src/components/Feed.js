@@ -1,10 +1,47 @@
-import React from 'react';
-import ProjectPreview from './ProjectPreview';
+import React, { useEffect, useState } from "react";
+import { Feed } from "../api";
 
-export default function Feed({ items }) {
+export default function FeedPage(){
+  const [globalFeed,setGlobal] = useState([]);
+  const [localFeed,setLocal] = useState([]);
+  const [err,setErr] = useState("");
+
+  useEffect(() => {
+    let alive = true;
+    (async ()=>{
+      try{
+        const g = await Feed.global();
+        if(!alive) return;
+        setGlobal(g||[]);
+        try{ setLocal(await Feed.local()); }catch{}
+      }catch(e){ setErr(e.message || "Failed to load feed"); }
+    })();
+    return ()=>{ alive=false; };
+  }, []);
+
   return (
-    <section style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(260px,1fr))',gap:12}}>
-      {items.map(p => <ProjectPreview key={p.id} project={p} />)}
-    </section>
+    <main className="container page grid">
+      {err && <div className="error">{err}</div>}
+      <section className="card card-pad">
+        <h2>Your circle</h2>
+        <ul className="list">
+          {localFeed.map(item => (
+            <li key={item._id}>
+              <b>{item.user?.name}</b> → <i>{item.project?.name}</i>: “{item.message}”
+            </li>
+          ))}
+        </ul>
+      </section>
+      <section className="card card-pad">
+        <h2>Global</h2>
+        <ul className="list">
+          {globalFeed.map(item => (
+            <li key={item._id}>
+              <b>{item.user?.name}</b> → <i>{item.project?.name}</i>: “{item.message}”
+            </li>
+          ))}
+        </ul>
+      </section>
+    </main>
   );
 }

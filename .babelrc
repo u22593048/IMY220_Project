@@ -1,9 +1,7 @@
 {
   "presets": [
-    ["@babel/preset-env", { "targets": { "esmodules": true } }],
+    ["@babel/preset-env", { "targets": { "node": "20" }, "modules": "commonjs" }],
     ["@babel/preset-react", { "runtime": "automatic" }]
   ],
-  "env": {
-    "production": { "compact": true }
-  }
+  "env": { "production": { "compact": true } }
 }
