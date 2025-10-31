@@ -1,0 +1,4 @@
+const extractTags = (txt) =>
+  (String(txt || "")
+    .match(/#[a-z0-9_]+/gi) || [])
+   .map(t => t.slice(1).toLowerCase());
